@@ -1,3 +1,10 @@
-type Mutation {
-  register(email: String, password: String): Boolean
+#import User, Error from '../../shared.graphql'
+
+type Query {
+  users: [User]!
 }
+
+type Mutation {
+  register(email: String, password: String): [Error!]
+}
+
