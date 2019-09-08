@@ -1,7 +1,14 @@
 type Query {
   hello(name: String): String!
+  users: [User]!
 }
 
 type Mutation {
   register(email: String, password: String): Boolean
+}
+
+type User {
+  id: String!
+  email: String!
+  password: String!
 }
