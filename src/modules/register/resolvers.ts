@@ -1,7 +1,11 @@
 import * as bcrypt from 'bcryptjs';
+import { ValidationError } from "yup";
 
 import {ResolverMap} from "../../types/graphql-util";
 import {User} from "../../entity/User";
+import { checkRegisterSchemaParams } from "../../utils/checkRegisterSchemaParams";
+import { formatYupError } from "../../utils/format-yup-error";
+import { duplicatedEmail } from "./registerErrorMessages";
 
 export const resolvers: ResolverMap = {
   Query: {
@@ -9,13 +13,20 @@ export const resolvers: ResolverMap = {
   },
 
   Mutation: {
-    register: async (_: any, { email, password }: GQL.IRegisterOnMutationArguments) => {
+    register: async (_: any, args: GQL.IRegisterOnMutationArguments) => {
+      try {
+        await checkRegisterSchemaParams.validate(args, { abortEarly: false });
+      } catch (error) {
+        return formatYupError(error);
+      }
+      
+      const { email, password } = args;
       const createdUserId = await User.findOne({ where: { email }, select: ['id']});
 
       if (createdUserId) {
         return [{
           path: 'email',
-          message: 'User with this email already exists',
+          message: duplicatedEmail,
         }];
       }
 
@@ -28,6 +39,18 @@ export const resolvers: ResolverMap = {
 
       await user.save();
       return null;
+    },
+
+    deleteUser: async (_: any, { email }: GQL.IRegisterOnMutationArguments) => {
+      const user = await User.findOne({ email: email as string });
+
+      if (!user) {
+        return false;
+      }
+
+      await user.remove();
+
+      return true;
     },
   }
 };

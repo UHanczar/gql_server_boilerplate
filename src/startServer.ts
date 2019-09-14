@@ -5,7 +5,7 @@ import { mergeSchemas, makeExecutableSchema } from 'graphql-tools';
 import { importSchema } from 'graphql-import';
 import { GraphQLServer } from 'graphql-yoga';
 
-import { createTypeormConnection } from "./utils/utils";
+import { createTypeormConnection } from "./utils/defineDatabase";
 
 export const startServer = async () => {
   const schemas: GraphQLSchema[] = [];
