@@ -1,11 +1,12 @@
 import * as bcrypt from 'bcryptjs';
 import { ValidationError } from "yup";
 
-import {ResolverMap} from "../../types/graphql-util";
+import { ResolverMap } from "../../types/graphql-util";
 import {User} from "../../entity/User";
 import { checkRegisterSchemaParams } from "../../utils/checkRegisterSchemaParams";
 import { formatYupError } from "../../utils/format-yup-error";
 import { duplicatedEmail } from "./registerErrorMessages";
+import {createConfirmEmailLink} from "../../utils/createConfirmEmailLink";
 
 export const resolvers: ResolverMap = {
   Query: {
@@ -13,7 +14,7 @@ export const resolvers: ResolverMap = {
   },
 
   Mutation: {
-    register: async (_: any, args: GQL.IRegisterOnMutationArguments) => {
+    register: async (_: any, args: GQL.IRegisterOnMutationArguments, { redis, url }) => {
       try {
         await checkRegisterSchemaParams.validate(args, { abortEarly: false });
       } catch (error) {
@@ -38,6 +39,9 @@ export const resolvers: ResolverMap = {
       });
 
       await user.save();
+
+      const link = await createConfirmEmailLink(url, user.id, redis);
+
       return null;
     },
 
