@@ -1,4 +1,5 @@
 import request from "graphql-request";
+import { Connection } from "typeorm";
 
 import { User } from "../../entity/User";
 import { createTypeormConnection } from "../../utils/defineDatabase";
@@ -8,6 +9,7 @@ import {duplicatedEmail, notLongEmail, notValidEmail, notValidPassword} from "./
 
 const userEmail = `n@i${Math.random()}y.n`;
 const userPassword = 'ttttttt';
+let connection: Connection;
 
 const mutation = (email: string, password: string) => `
   mutation {
@@ -18,11 +20,13 @@ const mutation = (email: string, password: string) => `
   }
 `;
 
-// let getHost = () => '';
-
 describe('register user resolver mutation', () => {
   beforeAll(async () => {
-    await createTypeormConnection();
+    connection = await createTypeormConnection();
+  });
+
+  afterAll(async () => {
+    await connection.close();
   });
 
   test('should test user registration', async () => {

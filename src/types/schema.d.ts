@@ -22,21 +22,36 @@ column: number;
 
 interface IQuery {
 __typename: "Query";
-hello: string;
+users: Array<IUser | null>;
 }
 
-interface IHelloOnQueryArguments {
-name?: string | null;
+interface IUser {
+__typename: "User";
+id: string;
+email: string;
+password: string;
+confirmed: boolean;
 }
 
 interface IMutation {
 __typename: "Mutation";
-register: boolean | null;
+register: Array<IError> | null;
+deleteUser: boolean;
 }
 
 interface IRegisterOnMutationArguments {
 email?: string | null;
 password?: string | null;
+}
+
+interface IDeleteUserOnMutationArguments {
+email: string;
+}
+
+interface IError {
+__typename: "Error";
+path: string;
+message: string;
 }
 }
 
