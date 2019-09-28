@@ -7,6 +7,7 @@ import { checkRegisterSchemaParams } from "../../utils/checkRegisterSchemaParams
 import { formatYupError } from "../../utils/format-yup-error";
 import { duplicatedEmail } from "./registerErrorMessages";
 import {createConfirmEmailLink} from "../../utils/createConfirmEmailLink";
+import { sendVerificationEmail } from "../../utils/sendVerificationEmail";
 
 export const resolvers: ResolverMap = {
   Query: {
@@ -41,6 +42,10 @@ export const resolvers: ResolverMap = {
       await user.save();
 
       const link = await createConfirmEmailLink(url, user.id, redis);
+
+      if (process.env.NODE_ENV !== "test") {
+        await sendVerificationEmail(email as string, link);
+      }
 
       return null;
     },
