@@ -50,8 +50,8 @@ export const resolvers: ResolverMap = {
       return null;
     },
 
-    deleteUser: async (_: any, { email }: GQL.IRegisterOnMutationArguments) => {
-      const user = await User.findOne({ email: email as string });
+    deleteUser: async (_: any, { id }: GQL.IDeleteUserOnMutationArguments) => {
+      const user = await User.findOne({ id: id });
 
       if (!user) {
         return false;

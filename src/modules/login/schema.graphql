@@ -1,0 +1,9 @@
+#import User, Error from '../../shared.graphql'
+
+type Query {
+  loginDefault: String
+}
+
+type Mutation {
+  login(email: String, password: String): [Error!]
+}

@@ -22,6 +22,7 @@ column: number;
 
 interface IQuery {
 __typename: "Query";
+loginDefault: string | null;
 users: Array<IUser | null>;
 }
 
@@ -35,8 +36,14 @@ confirmed: boolean;
 
 interface IMutation {
 __typename: "Mutation";
+login: Array<IError> | null;
 register: Array<IError> | null;
 deleteUser: boolean;
+}
+
+interface ILoginOnMutationArguments {
+email?: string | null;
+password?: string | null;
 }
 
 interface IRegisterOnMutationArguments {
@@ -45,7 +52,7 @@ password?: string | null;
 }
 
 interface IDeleteUserOnMutationArguments {
-email: string;
+id: string;
 }
 
 interface IError {
