@@ -41,6 +41,10 @@ describe('login process', () => {
     await createTypeormConnection();
   });
 
+  afterAll(async () => {
+    await connection.close();
+  });
+
   test('should test invalid login', async () => {
     await loginTestWrapper(
       'a@g.b',
