@@ -1,3 +1,5 @@
+import "reflect-metadata";
+import 'dotenv/config';
 import { GraphQLServer } from 'graphql-yoga';
 import * as session from 'express-session';
 import * as connectRedis from 'connect-redis';
@@ -6,7 +8,6 @@ import { redis } from './redis';
 import { createTypeormConnection } from "./utils/defineDatabase";
 import { confirmEmail } from "./routes/confirmEmail";
 import { generateSchema } from "./utils/generateSchema";
-import { TEST_SESSION_SECRET } from "./testSetup/constants";
 
 export const startServer = async () => {
   const server = new GraphQLServer({
@@ -20,7 +21,8 @@ export const startServer = async () => {
 
   const cors = {
     credentials: true,
-    origin: process.env.FRONTEND_HOST as string,
+    origin: process.env._environment === 'test' ?
+      '*' : process.env.FRONTEND_HOST as string,
   };
 
   const RedisStore = connectRedis(session);
@@ -31,7 +33,7 @@ export const startServer = async () => {
         client: redis as any
       }),
       name: "qid",
-      secret: process.env.SESSION_SECRET as string || TEST_SESSION_SECRET,
+      secret: process.env.SESSION_SECRET as string,
       resave: false,
       saveUninitialized: false,
       cookie: {

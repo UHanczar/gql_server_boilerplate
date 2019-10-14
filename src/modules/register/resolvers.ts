@@ -36,7 +36,7 @@ export const resolvers: ResolverMap = {
 
       const user = await User.create({
         email: email as string,
-        password: hashedPassword,
+        password: password as string,
       });
 
       await user.save();
